@@ -1,0 +1,1 @@
+Finds the intrinsic size of a widget and provides it in a convenient builder.

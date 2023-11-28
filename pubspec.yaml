@@ -1,0 +1,17 @@
+name: intrinsic_size_builder
+description: "Finds the intrinsic size of a widget and provides it in a convenient builder."
+version: 1.0.0
+repository: https://github.com/mase7569/intrinsic_size_builder
+
+environment:
+  sdk: ">=3.2.1 <4.0.0"
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
