@@ -1,3 +1,8 @@
+## 1.0.3
+
+* Revert material context
+  * It introduces unwanted defaults. Just use the IntrinsicSizeBuilder below the Scaffold's body.
+
 ## 1.0.2
 
 * Fix sizes in a material context

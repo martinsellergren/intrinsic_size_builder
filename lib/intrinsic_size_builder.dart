@@ -40,34 +40,32 @@ class _IntrinsicSizeBuilderState extends State<IntrinsicSizeBuilder> {
         return false;
       },
       child: Builder(
-        builder: (context) => Material(
-          child: Stack(
-            children: [
-              if (!_isDetermined)
-                () {
-                  _evaluateSize();
-                  return Opacity(
-                    opacity: 0,
-                    child: KeyedSubtree(
-                      key: _subjectKey,
-                      child: widget.child,
-                    ),
-                  );
-                }(),
-              if (_size != null)
-                widget.builder(
-                  context,
-                  _size!,
-                  OverflowBox(
-                    maxHeight: double.infinity,
-                    child: KeyedSubtree(
-                      key: _isDetermined ? _subjectKey : null,
-                      child: widget.child,
-                    ),
+        builder: (context) => Stack(
+          children: [
+            if (!_isDetermined)
+              () {
+                _evaluateSize();
+                return Opacity(
+                  opacity: 0,
+                  child: KeyedSubtree(
+                    key: _subjectKey,
+                    child: widget.child,
+                  ),
+                );
+              }(),
+            if (_size != null)
+              widget.builder(
+                context,
+                _size!,
+                OverflowBox(
+                  maxHeight: double.infinity,
+                  child: KeyedSubtree(
+                    key: _isDetermined ? _subjectKey : null,
+                    child: widget.child,
                   ),
                 ),
-            ],
-          ),
+              ),
+          ],
         ),
       ),
     );
