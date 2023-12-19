@@ -21,6 +21,7 @@ class _IntrinsicSizeBuilderState extends State<IntrinsicSizeBuilder> {
   final _subjectKey = GlobalKey();
   Size? _size;
   bool _isDetermined = false;
+  BoxConstraints? _lastConstraints;
 
   void _evaluateSize() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -39,34 +40,40 @@ class _IntrinsicSizeBuilderState extends State<IntrinsicSizeBuilder> {
         Future(() => setState(() => _isDetermined = false));
         return false;
       },
-      child: Builder(
-        builder: (context) => Stack(
-          children: [
-            if (!_isDetermined)
-              () {
-                _evaluateSize();
-                return Opacity(
-                  opacity: 0,
-                  child: KeyedSubtree(
-                    key: _subjectKey,
-                    child: widget.child,
-                  ),
-                );
-              }(),
-            if (_size != null)
-              widget.builder(
-                context,
-                _size!,
-                OverflowBox(
-                  maxHeight: double.infinity,
-                  child: KeyedSubtree(
-                    key: _isDetermined ? _subjectKey : null,
-                    child: widget.child,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          if (_lastConstraints != null && _lastConstraints != constraints) {
+            Future(() => setState(() => _isDetermined = false));
+          }
+          _lastConstraints = constraints;
+          return Stack(
+            children: [
+              if (!_isDetermined)
+                () {
+                  _evaluateSize();
+                  return Opacity(
+                    opacity: 0,
+                    child: KeyedSubtree(
+                      key: _subjectKey,
+                      child: widget.child,
+                    ),
+                  );
+                }(),
+              if (_size != null)
+                widget.builder(
+                  context,
+                  _size!,
+                  OverflowBox(
+                    maxHeight: double.infinity,
+                    child: KeyedSubtree(
+                      key: _isDetermined ? _subjectKey : null,
+                      child: widget.child,
+                    ),
                   ),
                 ),
-              ),
-          ],
-        ),
+            ],
+          );
+        },
       ),
     );
   }

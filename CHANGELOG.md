@@ -1,3 +1,7 @@
+## 1.0.4
+
+* Recalculate size on updated layout constraints
+
 ## 1.0.3
 
 * Revert material context

@@ -1,6 +1,6 @@
 name: intrinsic_size_builder
 description: "Finds the intrinsic size of a widget and provides it in a convenient builder."
-version: 1.0.3
+version: 1.0.4
 repository: https://github.com/mase7569/intrinsic_size_builder
 
 environment:
