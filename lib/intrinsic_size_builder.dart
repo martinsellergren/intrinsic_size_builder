@@ -3,6 +3,15 @@ library intrinsic_size_builder;
 import 'package:flutter/material.dart';
 
 class IntrinsicSizeBuilder extends StatefulWidget {
+  /// Refresh the sizing of any IntrinsicSizeBuilder further up the widget tree.
+  /// Basically, always call this when a child is resized.
+  ///
+  /// See the example/ how you can do it for an Image.network, where the size
+  /// differs between loading and loaded state.
+  static void refresh(BuildContext context) {
+    const SizeChangedLayoutNotification().dispatch(context);
+  }
+
   final Widget child;
   final Widget Function(BuildContext context, Size childSize, Widget child)
       builder;

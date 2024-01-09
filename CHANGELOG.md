@@ -1,3 +1,7 @@
+## 1.0.5
+
+* Add IntrinsicSizeBuilder.refresh()
+
 ## 1.0.4
 
 * Recalculate size on updated layout constraints

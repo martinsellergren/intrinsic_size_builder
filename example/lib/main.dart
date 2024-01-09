@@ -97,7 +97,7 @@ class _ImageState extends State<_Image> {
         .addListener(ImageStreamListener((info, call) async {
       await Future.delayed(const Duration(seconds: 1)); // Just for demo purpose
       if (!mounted) return;
-      const SizeChangedLayoutNotification().dispatch(context);
+      IntrinsicSizeBuilder.refresh(context);
       setState(() => _isLoading = false);
     }));
   }
