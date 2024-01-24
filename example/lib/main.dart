@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intrinsic_size_builder/intrinsic_size_builder.dart';
 
+enum Status {
+  loading,
+  loaded,
+}
+
 void main() {
   runApp(const MaterialApp(home: Page()));
 }
@@ -14,6 +19,17 @@ class Page extends StatefulWidget {
 
 class _PageState extends State<Page> {
   String _imgUrl = 'https://placehold.co/600x400.png';
+  Status _status = Status.loading;
+
+  @override
+  void initState() {
+    super.initState();
+    () async {
+      // Just to simulate some page state data being loaded, etc.
+      await Future.delayed(const Duration(seconds: 1));
+      if (mounted) setState(() => _status = Status.loaded);
+    }();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,32 +54,59 @@ class _PageState extends State<Page> {
           ),
         ],
       ),
-      body: IntrinsicSizeBuilder(
-        child: _Image(
-          key: ValueKey(_imgUrl),
-          imgUrl: _imgUrl,
-          loadingBuilder: (_) => const SizedBox(
-            height: 200,
-            child: Center(child: CircularProgressIndicator()),
-          ),
+      body: switch (_status) {
+        Status.loading => const _LoadingBody(),
+        Status.loaded => _LoadedBody(imgUrl: _imgUrl),
+      },
+    );
+  }
+}
+
+class _LoadingBody extends StatelessWidget {
+  const _LoadingBody();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: CircularProgressIndicator(),
+    );
+  }
+}
+
+class _LoadedBody extends StatelessWidget {
+  final String imgUrl;
+  const _LoadedBody({required this.imgUrl});
+
+  @override
+  Widget build(BuildContext context) {
+    return IntrinsicSizeBuilder(
+      constrainedAxis: Axis.horizontal,
+      subject: _Image(
+        key: ValueKey(imgUrl),
+        imgUrl: imgUrl,
+        loadingBuilder: (_) => const SizedBox(
+          height: 100,
+          child: Center(child: CircularProgressIndicator()),
         ),
-        builder: (context, heroImageSize, heroImage) => CustomScrollView(
+      ),
+      builder: (context, imageSize, image) {
+        return CustomScrollView(
           slivers: [
             SliverAppBar(
               pinned: true,
               title: const Text('Example for intrinsic_size_builder'),
               flexibleSpace: FlexibleSpaceBar(
-                background: heroImage,
+                background: image,
               ),
-              expandedHeight: heroImageSize.height,
+              expandedHeight: imageSize.height,
             ),
             SliverList.builder(
               itemCount: 10,
               itemBuilder: (context, i) => const Placeholder(),
             ),
           ],
-        ),
-      ),
+        );
+      },
     );
   }
 }
@@ -97,8 +140,8 @@ class _ImageState extends State<_Image> {
         .addListener(ImageStreamListener((info, call) async {
       await Future.delayed(const Duration(seconds: 1)); // Just for demo purpose
       if (!mounted) return;
-      IntrinsicSizeBuilder.refresh(context);
       setState(() => _isLoading = false);
+      IntrinsicSizeBuilder.refresh(context);
     }));
   }
 

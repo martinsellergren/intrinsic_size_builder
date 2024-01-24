@@ -1,3 +1,10 @@
+## 2.0.0
+
+* Rename parameter child to subject
+* Add parameter constrainedAxis
+  * You may now control the unconstrained context the size is calculated in.
+* Add parameter firstFrameWidget
+
 ## 1.0.5
 
 * Add IntrinsicSizeBuilder.refresh()

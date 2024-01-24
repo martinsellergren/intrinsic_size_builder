@@ -2,7 +2,28 @@ library intrinsic_size_builder;
 
 import 'package:flutter/material.dart';
 
+typedef WithSizeBuilder = Widget Function(
+    BuildContext context, Size subjectSize, Widget subject);
+
 class IntrinsicSizeBuilder extends StatefulWidget {
+  const IntrinsicSizeBuilder(
+      {super.key,
+      required this.subject,
+      required this.builder,
+      this.constrainedAxis,
+      this.firstFrameWidget});
+
+  final Widget subject;
+  final WithSizeBuilder builder;
+
+  /// The axis to retain constraints on, if any, when determining subject size.
+  final Axis? constrainedAxis;
+
+  /// Shown only first frame. This frame is used for determining subject size.
+  /// Experiment with this if you're trying to avoid initial flicker.
+  /// Defaults to transparency.
+  final Widget? firstFrameWidget;
+
   /// Refresh the sizing of any IntrinsicSizeBuilder further up the widget tree.
   /// Basically, always call this when a child is resized.
   ///
@@ -12,77 +33,61 @@ class IntrinsicSizeBuilder extends StatefulWidget {
     const SizeChangedLayoutNotification().dispatch(context);
   }
 
-  final Widget child;
-  final Widget Function(BuildContext context, Size childSize, Widget child)
-      builder;
-
-  const IntrinsicSizeBuilder({
-    super.key,
-    required this.child,
-    required this.builder,
-  });
-
   @override
   State<IntrinsicSizeBuilder> createState() => _IntrinsicSizeBuilderState();
 }
 
 class _IntrinsicSizeBuilderState extends State<IntrinsicSizeBuilder> {
-  final _subjectKey = GlobalKey();
+  final _evaluationKey = GlobalKey();
+  final _evaluatedKey = GlobalKey();
   Size? _size;
-  bool _isDetermined = false;
-  BoxConstraints? _lastConstraints;
 
-  void _evaluateSize() {
+  @override
+  void initState() {
+    super.initState();
+    _evaluate();
+  }
+
+  void _evaluate() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final size = _subjectKey.currentContext?.size;
-      if (size != _size) {
-        setState(() => _size = size);
-      }
-      setState(() => _isDetermined = true);
+      final size = _evaluationKey.currentContext?.size;
+      if (size == null) return;
+      setState(() => _size = size);
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final subject = UnconstrainedBox(
+      constrainedAxis: widget.constrainedAxis,
+      child: KeyedSubtree(
+        key: _evaluationKey,
+        child: widget.subject,
+      ),
+    );
+    final child = _size == null
+        ? null
+        : KeyedSubtree(
+            key: _evaluatedKey,
+            child: widget.builder(
+              context,
+              _size!,
+              widget.subject,
+            ),
+          );
     return NotificationListener<SizeChangedLayoutNotification>(
       onNotification: (notification) {
-        Future(() => setState(() => _isDetermined = false));
+        _evaluate();
         return false;
       },
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          if (_lastConstraints != null && _lastConstraints != constraints) {
-            Future(() => setState(() => _isDetermined = false));
-          }
-          _lastConstraints = constraints;
-          return Stack(
-            children: [
-              if (!_isDetermined)
-                () {
-                  _evaluateSize();
-                  return Opacity(
-                    opacity: 0,
-                    child: KeyedSubtree(
-                      key: _subjectKey,
-                      child: widget.child,
-                    ),
-                  );
-                }(),
-              if (_size != null)
-                widget.builder(
-                  context,
-                  _size!,
-                  OverflowBox(
-                    maxHeight: double.infinity,
-                    child: KeyedSubtree(
-                      key: _isDetermined ? _subjectKey : null,
-                      child: widget.child,
-                    ),
-                  ),
-                ),
-            ],
-          );
-        },
+      child: Stack(
+        children: [
+          Opacity(
+            opacity: 0,
+            child: subject,
+          ),
+          child ?? widget.firstFrameWidget ?? const SizedBox(),
+        ],
       ),
     );
   }
