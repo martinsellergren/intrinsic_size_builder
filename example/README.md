@@ -1,4 +1,15 @@
-# images
+# [text_box](https://github.com/MartinSellergren/intrinsic_size_builder/tree/main/example/text_box)
+
+A simple example illustrating getting the intrinsic size of some text widget.
+
+# [sliver_app_bar](https://github.com/MartinSellergren/intrinsic_size_builder/tree/main/example/sliver_app_bar)
+
+A sliver app bar with dynamic sizing of flexible space and bottom.
+
+Notice:
+- We nest 2 IntrinsicSizeBuilder's in this case, to get both flexibleSpace height and bottom height.
+
+# [images](https://github.com/MartinSellergren/intrinsic_size_builder/tree/main/example/images)
 
 Put images in a SliverAppBar of dynamic, varying sizes.
 
