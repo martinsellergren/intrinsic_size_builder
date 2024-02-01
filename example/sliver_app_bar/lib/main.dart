@@ -15,12 +15,10 @@ class _Page extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: IntrinsicSizeBuilder(
-        constrainedAxis: Axis.horizontal,
         subject: const _FlexibleSpace(),
         builder: (context, flexibleSpaceSize, flexibleSpace) =>
             IntrinsicSizeBuilder(
           subject: const _Bottom(),
-          constrainedAxis: Axis.horizontal,
           builder: (context, bottomSize, bottom) => CustomScrollView(
             slivers: [
               SliverAppBar.medium(

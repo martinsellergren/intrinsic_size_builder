@@ -10,25 +10,29 @@ class IntrinsicSizeBuilder extends StatefulWidget {
       {super.key,
       required this.subject,
       required this.builder,
-      this.constrainedAxis,
+      this.constrainedAxis = Axis.horizontal,
       this.firstFrameWidget});
 
   final Widget subject;
   final WithSizeBuilder builder;
 
   /// The axis to retain constraints on, if any, when determining subject size.
+  ///
+  /// Without this (i.e if this is null), the size evaluation happens in an
+  /// unconstrained context (i.e height and width = infinity). It defaults to
+  /// Axis.horizontal which means, horizontal constraints are same as parent's.
   final Axis? constrainedAxis;
 
-  /// Shown only first frame. This frame is used for determining subject size.
+  /// Shown only first frame. First frame is used for determining subject size.
   /// Experiment with this if you're trying to avoid initial flicker.
   /// Defaults to transparency.
   final Widget? firstFrameWidget;
 
-  /// Refresh the sizing of any IntrinsicSizeBuilder further up the widget tree.
-  /// Basically, always call this when a child is resized.
+  /// Refresh the sizing of all IntrinsicSizeBuilders further up the widget tree.
+  /// Basically, always call this when a subject is resized.
   ///
-  /// See the example/ how you can do it for an Image.network, where the size
-  /// differs between loading and loaded state.
+  /// See example/images/lib/main.dart how you can do it for an Image.network,
+  /// where the size differs between loading and loaded state.
   static void refresh(BuildContext context) {
     const SizeChangedLayoutNotification().dispatch(context);
   }

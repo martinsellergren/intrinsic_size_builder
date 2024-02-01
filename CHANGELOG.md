@@ -1,3 +1,7 @@
+## 2.0.1
+
+* Default constrainedAxis to Axis.horizontal
+
 ## 2.0.0
 
 * Rename parameter child to subject

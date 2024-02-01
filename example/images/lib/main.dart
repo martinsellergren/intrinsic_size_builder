@@ -94,7 +94,6 @@ class _LoadedBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IntrinsicSizeBuilder(
-      constrainedAxis: Axis.horizontal,
       firstFrameWidget: loadingBody,
       subject: _Image(
         key: ValueKey(imgUrl),
