@@ -18,6 +18,8 @@ class Page extends StatefulWidget {
 }
 
 class _PageState extends State<Page> {
+  final _loadingBodyKey = GlobalKey();
+
   String _imgUrl = 'https://placehold.co/600x400.png';
   Status _status = Status.loading;
 
@@ -34,6 +36,7 @@ class _PageState extends State<Page> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.red,
       floatingActionButton: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -55,32 +58,44 @@ class _PageState extends State<Page> {
         ],
       ),
       body: switch (_status) {
-        Status.loading => const _LoadingBody(),
-        Status.loaded => _LoadedBody(imgUrl: _imgUrl),
+        Status.loading => _LoadingBody(key: _loadingBodyKey),
+        Status.loaded => _LoadedBody(
+            imgUrl: _imgUrl,
+            loadingBody: _LoadingBody(key: _loadingBodyKey),
+          ),
       },
     );
   }
 }
 
 class _LoadingBody extends StatelessWidget {
-  const _LoadingBody();
+  const _LoadingBody({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: CircularProgressIndicator(),
+    return Container(
+      color: Colors.blue,
+      child: const Center(
+        child: CircularProgressIndicator(),
+      ),
     );
   }
 }
 
 class _LoadedBody extends StatelessWidget {
   final String imgUrl;
-  const _LoadedBody({required this.imgUrl});
+  final Widget loadingBody;
+
+  const _LoadedBody({
+    required this.imgUrl,
+    required this.loadingBody,
+  });
 
   @override
   Widget build(BuildContext context) {
     return IntrinsicSizeBuilder(
       constrainedAxis: Axis.horizontal,
+      firstFrameWidget: loadingBody,
       subject: _Image(
         key: ValueKey(imgUrl),
         imgUrl: imgUrl,
@@ -101,8 +116,11 @@ class _LoadedBody extends StatelessWidget {
               expandedHeight: imageSize.height,
             ),
             SliverList.builder(
-              itemCount: 10,
-              itemBuilder: (context, i) => const Placeholder(),
+              itemCount: 100,
+              itemBuilder: (context, i) => Container(
+                color: Colors.green[100],
+                child: const Placeholder(),
+              ),
             ),
           ],
         );

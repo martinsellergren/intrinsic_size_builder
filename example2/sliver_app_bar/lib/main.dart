@@ -39,8 +39,7 @@ class _Page extends StatelessWidget {
                 itemCount: 100,
                 itemBuilder: (context, index) => Container(
                   color: Colors.green[100],
-                  alignment: Alignment.center,
-                  child: Text('item$index'),
+                  child: const Placeholder(),
                 ),
               )
             ],

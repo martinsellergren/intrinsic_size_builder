@@ -1,16 +1,16 @@
-name: example
-description: "Example for intrinsic_size_builder."
+name: images
+description: "A new Flutter project."
 publish_to: "none"
 version: 1.0.0+1
 
 environment:
-  sdk: ">=3.0.0 <4.0.0"
+  sdk: ">=3.2.3 <4.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
   intrinsic_size_builder:
-    path: ..
+    path: ../..
 
 dev_dependencies:
   flutter_test:
