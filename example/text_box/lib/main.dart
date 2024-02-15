@@ -59,7 +59,7 @@ class _WithBorder extends StatelessWidget {
     return Container(
       width: size.width,
       height: size.height,
-      decoration: BoxDecoration(
+      foregroundDecoration: BoxDecoration(
         border: Border.all(),
       ),
       alignment: Alignment.center,
