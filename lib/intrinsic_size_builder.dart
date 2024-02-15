@@ -45,6 +45,7 @@ class _IntrinsicSizeBuilderState extends State<IntrinsicSizeBuilder> {
   final _evaluationKey = GlobalKey();
   final _evaluatedKey = GlobalKey();
   Size? _size;
+  BoxConstraints? _previousConstraints;
 
   @override
   void initState() {
@@ -79,20 +80,29 @@ class _IntrinsicSizeBuilderState extends State<IntrinsicSizeBuilder> {
               widget.subject,
             ),
           );
-    return NotificationListener<SizeChangedLayoutNotification>(
-      onNotification: (notification) {
-        _evaluate();
-        return false;
-      },
-      child: Stack(
-        children: [
-          Opacity(
-            opacity: 0,
-            child: subject,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        if (_previousConstraints != null &&
+            constraints != _previousConstraints) {
+          _evaluate();
+        }
+        _previousConstraints = constraints;
+        return NotificationListener<SizeChangedLayoutNotification>(
+          onNotification: (notification) {
+            _evaluate();
+            return false;
+          },
+          child: Stack(
+            children: [
+              Opacity(
+                opacity: 0,
+                child: subject,
+              ),
+              child ?? widget.firstFrameWidget ?? const SizedBox(),
+            ],
           ),
-          child ?? widget.firstFrameWidget ?? const SizedBox(),
-        ],
-      ),
+        );
+      },
     );
   }
 }

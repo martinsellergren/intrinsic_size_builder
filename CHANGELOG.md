@@ -1,3 +1,7 @@
+## 2.0.2
+
+* Refresh on layout changes
+
 ## 2.0.1
 
 * Default constrainedAxis to Axis.horizontal
